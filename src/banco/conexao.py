@@ -19,9 +19,11 @@ DATABASE_URL = f"postgresql://{user}:{password}@{host}:{port}/{db_name}"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+
 def criar_tabelas():
     Base.metadata.create_all(bind=engine)
     print("Tabelas verificadas e criadas com sucesso no banco de dados.")
+
 
 def obter_sessao():
     db = SessionLocal()
