@@ -1,0 +1,15 @@
+# Ambientes virtuais
+venv/
+env/
+
+# Arquivos de ambiente e senhas (NUNCA subir para o repositório)
+.env
+
+# Arquivos temporários do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDEs
+.vscode/
+.idea/
