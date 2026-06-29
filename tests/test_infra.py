@@ -15,5 +15,5 @@ def test_iniciar_modulo():
     # P/ cobrir o código dentro do main.py
     try:
         iniciar_modulo()
-    except Exception:
-        pass
+    except Exception as e:
+        pytest.fail(f"Erro ao iniciar módulo: {e}")
