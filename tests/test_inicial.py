@@ -1,4 +1,3 @@
 def test_configuracao():
-    assert True
-
-    
+    resultado = 1 + 1
+    assert resultado == 2
