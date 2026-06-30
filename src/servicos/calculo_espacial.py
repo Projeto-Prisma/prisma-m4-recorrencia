@@ -16,8 +16,6 @@ CONFIGURACAO_RECORRENCIA = {
         "raio_metros": 30.0,
         "janela_dias": 15,
     },  # Urgência maior
-    
-   
     # ILUMINAÇÃO E ENERGIA: Risco alto e abrange quarteirões.
     CategoriaDenuncia.ILUMINACAO_PUBLICA: {"raio_metros": 50.0, "janela_dias": 15},
     CategoriaDenuncia.FIO_ROMPIDO: {
@@ -25,13 +23,10 @@ CONFIGURACAO_RECORRENCIA = {
         "janela_dias": 2,
     },  # Altíssima urgência, tempo curto
     CategoriaDenuncia.POSTE_EM_RISCO: {"raio_metros": 30.0, "janela_dias": 7},
-    
-    
     # SANEAMENTO: Água escorre, então o raio precisa ser um pouco maior.
     CategoriaDenuncia.VAZAMENTO_AGUA: {"raio_metros": 50.0, "janela_dias": 7},
     CategoriaDenuncia.VAZAMENTO_ESGOTO: {"raio_metros": 50.0, "janela_dias": 15},
     CategoriaDenuncia.BUEIRO_ENTUPIDO: {"raio_metros": 30.0, "janela_dias": 30},
-    
     # LIMPEZA URBANA: Geralmente confinado a uma esquina ou terreno.
     CategoriaDenuncia.LIXO_IRREGULAR: {"raio_metros": 30.0, "janela_dias": 15},
     CategoriaDenuncia.ENTULHO_CALCADA: {"raio_metros": 20.0, "janela_dias": 15},
@@ -39,8 +34,6 @@ CONFIGURACAO_RECORRENCIA = {
         "raio_metros": 50.0,
         "janela_dias": 3,
     },  # Rápida decomposição
-    
-    
     # MEIO AMBIENTE: Raios variados dependendo da biologia/física.
     CategoriaDenuncia.ARVORE_RISCO_QUEDA: {"raio_metros": 20.0, "janela_dias": 5},
     CategoriaDenuncia.PODA_ARVORE: {
@@ -55,8 +48,6 @@ CONFIGURACAO_RECORRENCIA = {
         "raio_metros": 300.0,
         "janela_dias": 365,
     },  # Sazonalidade anual
-    
-    
     # TRÂNSITO: Cruzamentos são exatos.
     CategoriaDenuncia.SEMAFORO_QUEBRADO: {"raio_metros": 30.0, "janela_dias": 3},
     CategoriaDenuncia.SINALIZACAO_DANIFICADA: {"raio_metros": 20.0, "janela_dias": 30},
@@ -76,7 +67,9 @@ def processar_nova_denuncia(
     # 1. Resgata a regra da categoria (Usa 'default' se a categoria não estiver na matriz)
     regra = CONFIGURACAO_RECORRENCIA.get(categoria, CONFIGURACAO_RECORRENCIA["default"])
 
-    data_limite = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=regra["janela_dias"])
+    data_limite = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(
+        days=regra["janela_dias"]
+    )
     ponto_wkt = f"POINT({longitude} {latitude})"
     ponto_geografico = WKTElement(ponto_wkt, srid=4326)
 

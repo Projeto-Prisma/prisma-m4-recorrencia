@@ -19,7 +19,7 @@ class CategoriaDenuncia(str, enum.Enum):
     FIO_ROMPIDO = "FIO_ROMPIDO"
     POSTE_EM_RISCO = "POSTE_EM_RISCO"
 
-    # Saneamento 
+    # Saneamento
     VAZAMENTO_AGUA = "VAZAMENTO_AGUA"
     VAZAMENTO_ESGOTO = "VAZAMENTO_ESGOTO"
     BUEIRO_ENTUPIDO = "BUEIRO_ENTUPIDO"
@@ -39,7 +39,7 @@ class CategoriaDenuncia(str, enum.Enum):
     SEMAFORO_QUEBRADO = "SEMAFORO_QUEBRADO"
     SINALIZACAO_DANIFICADA = "SINALIZACAO_DANIFICADA"
     VEICULO_ABANDONADO = "VEICULO_ABANDONADO"
-    
+
     OUTROS = "OUTROS"
 
 
@@ -49,7 +49,11 @@ class Denuncia(Base):
     id = Column(Integer, primary_key=True, index=True)
     # O banco só aceita o que está no Enum
     categoria = Column(Enum(CategoriaDenuncia), nullable=False)
-    data_ocorrencia = Column(DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None), nullable=False)
+    data_ocorrencia = Column(
+        DateTime,
+        default=lambda: datetime.now(timezone.utc).replace(tzinfo=None),
+        nullable=False,
+    )
 
     localizacao = Column(Geometry("POINT", srid=4326), nullable=False)
 
