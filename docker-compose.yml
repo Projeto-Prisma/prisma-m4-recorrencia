@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  db-m4:
+    image: postgis/postgis:15-3.3
+    container_name: db_recorrencia_m4
+    environment:
+      POSTGRES_USER: prisma
+      POSTGRES_PASSWORD: prisma_password
+      POSTGRES_DB: recorrencia_db
+    ports:
+      - "5433:5432"
