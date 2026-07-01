@@ -7,15 +7,21 @@ from src.banco.modelos import Base
 # Carrega as variáveis do arquivo .env
 load_dotenv()
 
-# Lê as variáveis com segurança usando os.getenv
-user = os.getenv("DB_USER")
-password = os.getenv("DB_PASS")
-host = os.getenv("DB_HOST")
-port = os.getenv("DB_PORT")
-db_name = os.getenv("DB_NAME")
+# 1. Tenta pegar a URL completa primeiro (Padrão de Produção/Render/Supabase)
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-DATABASE_URL = f"postgresql://{user}:{password}@{host}:{port}/{db_name}"
+# 2. Se não existir (Padrão Local/Docker), monta a URL com as variáveis soltas
+if not DATABASE_URL:
+    # O segundo argumento no getenv é o valor padrão (fallback) caso a variável não exista no .env
+    user = os.getenv("DB_USER", "prisma")
+    password = os.getenv("DB_PASS", "prisma_password")
+    host = os.getenv("DB_HOST", "127.0.0.1")
+    port = os.getenv("DB_PORT", "5433")
+    db_name = os.getenv("DB_NAME", "recorrencia_db")
 
+    DATABASE_URL = f"postgresql://{user}:{password}@{host}:{port}/{db_name}"
+
+# Cria o motor de conexão
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
