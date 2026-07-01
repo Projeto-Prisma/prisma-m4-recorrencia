@@ -1,0 +1,27 @@
+# Ambientes Virtuais
+venv/
+env/
+.venv/
+
+# Arquivos de Variáveis de Ambiente e Segredos
+.env
+*.env
+.env.*
+
+# Repositório e versionamento
+.git/
+.gitignore
+
+# Cache do Python e artefatos de compilação
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Configurações de IDEs (VS Code, PyCharm, etc)
+.vscode/
+.idea/
+.DS_Store

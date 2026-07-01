@@ -58,7 +58,7 @@ jobs:
           DB_PASS: prisma_password
           DB_NAME: recorrencia_db
         run: |
-          pytest --cov=src --cov-report=xml
+          pytest --cov=src --cov-report=xml:coverage.xml tests/
 
       - name: Upload de Cobertura para o Codecov
         uses: codecov/codecov-action@v4

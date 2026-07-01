@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+  # 1. O SEU BANCO DE DADOS
   db-m4:
     image: postgis/postgis:15-3.3
     container_name: db_recorrencia_m4
@@ -10,3 +11,34 @@ services:
       POSTGRES_DB: recorrencia_db
     ports:
       - "5433:5432"
+
+  # 2. UM MENSAGEIRO LOCAL (Para simular a infra do Prisma)
+  rabbitmq-local:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq_m4_teste
+    environment:
+      RABBITMQ_DEFAULT_USER: prisma
+      RABBITMQ_DEFAULT_PASS: prisma_password
+    ports:
+      - "5672:5672"
+      - "15672:15672" # Painel web local: http://localhost:15672
+
+  # 3. A SUA APLICAÇÃO (Construída a partir do Dockerfile)
+  m4-app:
+    build: .
+    container_name: m4_aplicacao
+    environment:
+      # Variáveis de Conexão com o DB Local
+      DATABASE_URL: postgresql://prisma:prisma_password@db-m4:5432/recorrencia_db
+      
+      # Variáveis de Conexão com o RabbitMQ Local (Simulando o contrato da Infra)
+      M4_RABBITMQ_URL: amqp://prisma:prisma_password@rabbitmq-local:5672/
+      M4_EXCHANGE: denuncias
+      M4_FILA: m4.recorrencia
+      M4_ROUTING_IN: denuncia.classificada
+      M4_ROUTING_OUT: padrao.recorrencia
+    ports:
+      - "8004:8000"
+    depends_on:
+      - db-m4
+      - rabbitmq-local
