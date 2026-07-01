@@ -7,16 +7,12 @@ from src.mensageria.consumidor import iniciar_consumidor
 # 1. Testando o Publicador
 @patch("src.mensageria.publicador.pika.BlockingConnection")
 def test_publicador_formata_e_envia_mensagem(mock_blocking_connection):
-    # Simula a conexão e o canal do RabbitMQ
     mock_conexao = MagicMock()
     mock_canal = MagicMock()
     mock_conexao.channel.return_value = mock_canal
     mock_blocking_connection.return_value = mock_conexao
 
-    # Instancia o publicador (que usará o mock no lugar da conexão real)
     publicador = PublicadorRabbitMQ()
-
-    # Cria um payload de mentira simulando o retorno do motor de regras
     payload_teste = {
         "evento": "padrao.recorrencia",
         "payload": {
@@ -30,16 +26,10 @@ def test_publicador_formata_e_envia_mensagem(mock_blocking_connection):
         },
     }
 
-    # Executa a ação
     publicador.publicar(payload_teste)
-
-    # Verifica se o método basic_publish foi chamado exatamente 1 vez
     mock_canal.basic_publish.assert_called_once()
 
-    # Captura os argumentos que foram passados para o basic_publish
     _, kwargs = mock_canal.basic_publish.call_args
-
-    # Valida se a mensagem foi transformada em JSON corretamente
     corpo_enviado = json.loads(kwargs["body"])
     assert corpo_enviado["evento"] == "padrao.recorrencia"
     assert corpo_enviado["payload"]["contagem"] == 5
@@ -54,10 +44,8 @@ def test_consumidor_declara_filas_e_escuta(mock_blocking_connection):
     mock_conexao.channel.return_value = mock_canal
     mock_blocking_connection.return_value = mock_conexao
 
-    # Executa a função que liga o consumidor
     iniciar_consumidor()
 
-    # Garante que as declarações de infraestrutura foram feitas
     mock_canal.exchange_declare.assert_called_with(
         exchange="denuncias", exchange_type="topic", durable=True
     )
@@ -68,6 +56,29 @@ def test_consumidor_declara_filas_e_escuta(mock_blocking_connection):
         routing_key="denuncia.classificada",
     )
 
-    # Garante que ele entrou no modo de escuta
     mock_canal.basic_consume.assert_called_once()
     mock_canal.start_consuming.assert_called_once()
+
+
+# 3. Testando o tratamento de erro no Consumidor (Cobre o 'except' para o SonarCloud)
+@patch("src.mensageria.consumidor.pika.BlockingConnection")
+def test_consumidor_trata_erro_de_processamento(mock_blocking_connection):
+    mock_conexao = MagicMock()
+    mock_canal = MagicMock()
+    mock_conexao.channel.return_value = mock_canal
+    mock_blocking_connection.return_value = mock_conexao
+
+    # Inicia o consumidor para registrar o callback
+    iniciar_consumidor()
+    callback = mock_canal.basic_consume.call_args[1]["on_message_callback"]
+
+    # Payload corrompido (não é um JSON válido)
+    body = b"json_invalido"
+
+    # Intercepta a função print para verificar se o erro foi pego e logado
+    with patch("src.mensageria.consumidor.print") as mock_print:
+        callback(mock_canal, MagicMock(delivery_tag=1), None, body)
+
+        # Garante que ele acionou o basic_nack rejeitando a mensagem problemática
+        mock_canal.basic_nack.assert_called_with(delivery_tag=1, requeue=False)
+        mock_print.assert_called()
