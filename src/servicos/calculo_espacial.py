@@ -57,7 +57,7 @@ def processar_nova_denuncia(
                 raio_metros,
                 True,
             ),
-            or_(Denuncia.resolvido == False, Denuncia.data_ocorrencia >= data_limite),
+            or_(Denuncia.resolvido.is_(False), Denuncia.data_ocorrencia >= data_limite),
         )
         .order_by(Denuncia.data_ocorrencia.asc())
         .first()
@@ -82,7 +82,7 @@ def processar_nova_denuncia(
         db.query(func.count(Denuncia.id))
         .filter(
             Denuncia.cluster_id == novo_cluster_id,
-            or_(Denuncia.resolvido == False, Denuncia.data_ocorrencia >= data_limite),
+            or_(Denuncia.resolvido.is_(False), Denuncia.data_ocorrencia >= data_limite),
         )
         .scalar()
     )
