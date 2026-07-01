@@ -45,4 +45,4 @@ def health_check():
 
 if __name__ == "__main__":
     # O docker-compose mapeia a porta 8004 externa para a 8000 interna do container
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000)
