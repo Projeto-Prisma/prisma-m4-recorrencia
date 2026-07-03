@@ -32,7 +32,7 @@ def criar_tabelas():
     with engine.connect() as conn:
         conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis;"))
         conn.commit()
-        
+
     Base.metadata.create_all(bind=engine)
     print("PostGIS ativado e tabelas criadas com sucesso no banco de dados.")
 
