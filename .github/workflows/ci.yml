@@ -49,14 +49,10 @@ jobs:
           ruff check .
           ruff format --check .
 
-      # SOLUÇÃO: Passamos as variáveis de ambiente temporárias diretamente para o Pytest
+      # SOLUÇÃO: Passamos a URL completa do banco de dados (novo padrão) para o Pytest
       - name: Rodar Testes com Pytest
         env:
-          DB_HOST: localhost
-          DB_PORT: 5433
-          DB_USER: prisma
-          DB_PASS: prisma_password
-          DB_NAME: recorrencia_db
+          M4_DATABASE_URL: postgresql://prisma:prisma_password@localhost:5433/recorrencia_db
         run: |
           pytest --cov=src --cov-report=xml:coverage.xml tests/
 
